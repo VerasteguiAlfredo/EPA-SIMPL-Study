@@ -1,6 +1,6 @@
 # Resultados de la Figura 5 — Tendencias durante el periodo de estudio
 
-_Generado el 2026-10-17 19:24 a partir de EPA_SIMPL_Database.xlsx_
+_Generado el 2026-10-17 19:42 a partir de EPA_SIMPL_Database.xlsx_
 
 **Leyenda.** 
 Puntaje medio calificado por el adscrito de (A) autonomía de Zwisch y (B) desempeño SIMPL por mes de evaluación y año de residencia (171 evaluaciones del adscrito, 35 residentes); el tamaño del punto refleja el número de evaluaciones de cada mes. (C) Número acumulado de evaluaciones del adscrito y de autoevaluaciones de los residentes durante el periodo de estudio (abril–agosto de 2026). En los modelos ajustados de la Tabla 4, la razón de momios por mes de estudio fue 1.00 (IC 95% 0.74–1.35; P = .998) para Zwisch y 1.10 (IC 95% 0.85–1.42; P = .483) para SIMPL.

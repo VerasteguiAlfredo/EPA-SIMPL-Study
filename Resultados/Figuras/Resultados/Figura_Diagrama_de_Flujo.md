@@ -56,4 +56,4 @@ Flujo de formularios de evaluación, casos quirúrgicos y residentes en el estud
 |Evaluaciones del adscrito tras excluir casos marcados           | 141|
 |Casos pareados tras excluir casos marcados                      |  76|
 
-_Generado el 2026-10-17 19:24 a partir de EPA_SIMPL_Database.xlsx. Los formularios incompletos (n = 41) se capturan manualmente en EPA_Flowchart.R._
+_Generado el 2026-10-17 19:42 a partir de EPA_SIMPL_Database.xlsx. Los formularios incompletos (n = 41) se capturan manualmente en EPA_Flowchart.R._

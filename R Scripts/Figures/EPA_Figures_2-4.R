@@ -69,21 +69,21 @@ stack_panel <- function(var, labels, ramp, title, legend_title) {
     scale_colour_identity() +
     scale_y_continuous(limits = c(0, 106), breaks = seq(0, 100, 25), labels = function(x) paste0(x, "%"),
                        expand = expansion(mult = c(0, 0))) +
-    labs(x = "Postgraduate year", y = "Attending evaluations", title = title) +
+    labs(x = L("Postgraduate year", "Año de residencia"), y = L("Attending evaluations", "Evaluaciones del adscrito"), title = title) +
     theme_pub() +
     theme(legend.position = "bottom", legend.direction = "vertical",
           panel.grid.major.y = element_line(colour = GRID, linewidth = 0.3))
 }
-zw_short <- c("1 Show and tell", "2 Active help", "3 Passive help", "4 Supervision only")
-sm_short <- c("1 Unprepared/critical deficiency", "2 Inexperienced", "3 Intermediate",
-              "4 Practice-ready", "5 Exceptional")
-p2 <- (stack_panel("Zwisch_Autonomy", zw_short, RAMP4, "Zwisch autonomy level", "Zwisch level") |
-       stack_panel("SIMPL_Performance", sm_short, RAMP5, "SIMPL performance rating", "SIMPL rating")) +
+# zw_short / sm_short (numbered level labels) are defined in EPA_helpers.R
+p2 <- (stack_panel("Zwisch_Autonomy", zw_short, RAMP4, L("Zwisch autonomy level", "Nivel de autonomía de Zwisch"), L("Zwisch level", "Nivel de Zwisch")) |
+       stack_panel("SIMPL_Performance", sm_short, RAMP5, L("SIMPL performance rating", "Calificación de desempeño SIMPL"), L("SIMPL rating", "Calificación SIMPL"))) +
   plot_annotation(tag_levels = "A")
 save_fig(p2, "Figure_2_Ratings_by_PGY.png", 7.5, 4.6)
 leg2 <- write_legend("Figure_2_Legend.md",
-  "Figure 2. Attending-Rated Intraoperative Autonomy and Performance by Postgraduate Year",
-  sprintf("Distribution of (A) Zwisch autonomy levels and (B) SIMPL performance ratings assigned by attending surgeons across %d intraoperative evaluations of %d residents, shown as the percentage of evaluations within each postgraduate year. Darker shading indicates greater autonomy or higher performance. Numbers above bars are evaluations per postgraduate year; segment labels are shown for categories representing at least 8%% of evaluations.", n_att, n_res))
+  L("Figure 2. Attending-Rated Intraoperative Autonomy and Performance by Postgraduate Year",
+    "Figura 2. Autonomía y desempeño intraoperatorios calificados por el adscrito por año de residencia"),
+  sprintf(L("Distribution of (A) Zwisch autonomy levels and (B) SIMPL performance ratings assigned by attending surgeons across %d intraoperative evaluations of %d residents, shown as the percentage of evaluations within each postgraduate year. Darker shading indicates greater autonomy or higher performance. Numbers above bars are evaluations per postgraduate year; segment labels are shown for categories representing at least 8%% of evaluations.",
+            "Distribución de (A) los niveles de autonomía de Zwisch y (B) las calificaciones de desempeño SIMPL asignados por los cirujanos adscritos en %d evaluaciones intraoperatorias de %d residentes, expresada como porcentaje de evaluaciones dentro de cada año de residencia. El tono más oscuro indica mayor autonomía o mejor desempeño. Los números sobre las barras son evaluaciones por año de residencia; se muestran etiquetas en los segmentos que representan al menos 8%% de las evaluaciones."), n_att, n_res))
 
 dist_table <- function(var, labels) {
   w <- t(sapply(levels(att$PGY), function(g) {
@@ -91,19 +91,21 @@ dist_table <- function(var, labels) {
     c(N = length(x), vapply(seq_along(labels), function(k) pct_cell(sum(x == k), length(x)), ""))
   }))
   all <- c(N = nrow(att), vapply(seq_along(labels), function(k) pct_cell(sum(att[[var]] == k), nrow(att)), ""))
-  out <- data.frame(PGY = c(levels(att$PGY), "Overall"), rbind(w, all), check.names = FALSE, row.names = NULL)
-  names(out) <- c("PGY", "N", labels)
+  out <- data.frame(PGY = c(levels(att$PGY), OVERALL), rbind(w, all), check.names = FALSE, row.names = NULL)
+  names(out) <- c(L("PGY", "Año"), "N", labels)
   out
 }
 med_row <- function(var) {
   q <- tapply(att[[var]], att$PGY, function(x) fmt_mediqr(x))
-  data.frame(PGY = names(q), `Median (IQR)` = as.character(q), check.names = FALSE, row.names = NULL)
+  out <- data.frame(names(q), as.character(q), row.names = NULL)
+  names(out) <- c(L("PGY", "Año"), L("Median (IQR)", "Mediana (RIC)"))
+  out
 }
-write_fig_results("2", "Attending ratings by postgraduate year", leg2, list(
-  list(heading = "A. Zwisch autonomy level, n (row %)", data = dist_table("Zwisch_Autonomy", zw_short)),
-  list(heading = "A. Zwisch score by PGY", data = med_row("Zwisch_Autonomy")),
-  list(heading = "B. SIMPL performance rating, n (row %)", data = dist_table("SIMPL_Performance", sm_short)),
-  list(heading = "B. SIMPL score by PGY", data = med_row("SIMPL_Performance"))
+write_fig_results("2", L("Attending ratings by postgraduate year", "Calificaciones del adscrito por año de residencia"), leg2, list(
+  list(heading = L("A. Zwisch autonomy level, n (row %)", "A. Nivel de autonomía de Zwisch, n (% de la fila)"), data = dist_table("Zwisch_Autonomy", zw_short)),
+  list(heading = L("A. Zwisch score by PGY", "A. Puntaje de Zwisch por año de residencia"), data = med_row("Zwisch_Autonomy")),
+  list(heading = L("B. SIMPL performance rating, n (row %)", "B. Calificación de desempeño SIMPL, n (% de la fila)"), data = dist_table("SIMPL_Performance", sm_short)),
+  list(heading = L("B. SIMPL score by PGY", "B. Puntaje SIMPL por año de residencia"), data = med_row("SIMPL_Performance"))
 ))
 
 # =============================================================================
@@ -139,13 +141,15 @@ predict_upper <- function(m, cut) {
   })
   do.call(rbind, out)
 }
-pz <- predict_upper(m_z, 3) %>% mutate(Outcome = "Zwisch: supervision only")
-ps <- predict_upper(m_s, 3) %>% mutate(Outcome = "SIMPL: practice-ready or exceptional")
+OUT_Z <- L("Zwisch: supervision only", "Zwisch: solo supervisión")
+OUT_S <- L("SIMPL: practice-ready or exceptional", "SIMPL: listo para la práctica o excepcional")
+pz <- predict_upper(m_z, 3) %>% mutate(Outcome = OUT_Z)
+ps <- predict_upper(m_s, 3) %>% mutate(Outcome = OUT_S)
 pp <- rbind(pz, ps) %>%
-  mutate(Complexity = factor(Complexity, levels = c("Easy", "Moderate", "Difficult")),
-         Outcome = factor(Outcome, levels = c("Zwisch: supervision only", "SIMPL: practice-ready or exceptional")))
+  mutate(Complexity = factor(Complexity, levels = CX_LAB),
+         Outcome = factor(Outcome, levels = c(OUT_Z, OUT_S)))
 write.csv(pp %>% mutate(across(c(est, lo, hi), ~ round(.x, 4))),
-          file.path(fig_res_dir, "Figure_3_Predicted_Probabilities.csv"), row.names = FALSE)
+          file.path(fig_res_dir, L("Figure_3_Predicted_Probabilities.csv", "Figura_3_Probabilidades_Predichas.csv")), row.names = FALSE)
 
 prob_panel <- function(df, title) {
   dodge <- position_dodge(width = 0.38)
@@ -154,23 +158,26 @@ prob_panel <- function(df, title) {
     geom_line(position = dodge, linewidth = 0.6) +
     geom_errorbar(aes(ymin = lo, ymax = hi), width = 0, linewidth = 0.45, position = dodge, linetype = "solid") +
     geom_point(position = dodge, size = 2.1, fill = "white", stroke = 0.7) +
-    scale_colour_manual(values = setNames(RAMP3, c("Easy", "Moderate", "Difficult")), name = "Case complexity") +
-    scale_shape_manual(values = c(Easy = 21, Moderate = 22, Difficult = 24), name = "Case complexity") +
-    scale_linetype_manual(values = c(Easy = "dotted", Moderate = "dashed", Difficult = "solid"), name = "Case complexity") +
-    scale_x_continuous(breaks = 1:5, labels = paste0("PGY-", 1:5), expand = expansion(add = 0.3)) +
+    scale_colour_manual(values = setNames(RAMP3, CX_LAB), name = CX_NAME) +
+    scale_shape_manual(values = setNames(c(21, 22, 24), CX_LAB), name = CX_NAME) +
+    scale_linetype_manual(values = setNames(c("dotted", "dashed", "solid"), CX_LAB), name = CX_NAME) +
+    scale_x_continuous(breaks = 1:5, labels = PGY_LAB, expand = expansion(add = 0.3)) +
     scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25), labels = function(x) paste0(x * 100, "%"),
                        expand = expansion(mult = c(0.01, 0.02))) +
-    labs(x = "Postgraduate year", y = "Predicted probability", title = title) +
+    labs(x = L("Postgraduate year", "Año de residencia"), y = L("Predicted probability", "Probabilidad predicha"), title = title) +
     theme_pub()
 }
-p3 <- (prob_panel(filter(pp, Outcome == levels(pp$Outcome)[1]), "Zwisch: supervision only") |
-       prob_panel(filter(pp, Outcome == levels(pp$Outcome)[2]), "SIMPL: practice-ready or exceptional")) +
+CX_NAME <- L("Case complexity", "Complejidad del caso")
+p3 <- (prob_panel(filter(pp, Outcome == levels(pp$Outcome)[1]), OUT_Z) |
+       prob_panel(filter(pp, Outcome == levels(pp$Outcome)[2]), OUT_S)) +
   plot_layout(guides = "collect") + plot_annotation(tag_levels = "A") &
   theme(legend.position = "bottom")
 save_fig(p3, "Figure_3_Predicted_Probabilities.png", 7.5, 3.9)
 leg3 <- write_legend("Figure_3_Legend.md",
-  "Figure 3. Model-Predicted Probability of Supervision-Only Autonomy and Practice-Ready Performance",
-  sprintf("Predicted probability that the attending rated (A) the Zwisch level as supervision only and (B) SIMPL performance as practice-ready or exceptional, by postgraduate year and attending-rated case complexity. Estimates come from the mixed-effects ordinal models in Table 4 (%d attending evaluations, %d residents), standardized over the observed procedure, surgical approach, evaluating attending, and timing, for a resident with an average random effect. Error bars are 95%% CIs from %s simulations of the fixed-effect parameters. Points are offset horizontally for legibility.",
+  L("Figure 3. Model-Predicted Probability of Supervision-Only Autonomy and Practice-Ready Performance",
+    "Figura 3. Probabilidad predicha por el modelo de autonomía de solo supervisión y de desempeño listo para la práctica"),
+  sprintf(L("Predicted probability that the attending rated (A) the Zwisch level as supervision only and (B) SIMPL performance as practice-ready or exceptional, by postgraduate year and attending-rated case complexity. Estimates come from the mixed-effects ordinal models in Table 4 (%d attending evaluations, %d residents), standardized over the observed procedure, surgical approach, evaluating attending, and timing, for a resident with an average random effect. Error bars are 95%% CIs from %s simulations of the fixed-effect parameters. Points are offset horizontally for legibility.",
+            "Probabilidad predicha de que el adscrito calificara (A) el nivel de Zwisch como solo supervisión y (B) el desempeño SIMPL como listo para la práctica o excepcional, por año de residencia y complejidad del caso calificada por el adscrito. Las estimaciones provienen de los modelos ordinales de efectos mixtos de la Tabla 4 (%d evaluaciones del adscrito, %d residentes), estandarizadas sobre el procedimiento, el abordaje quirúrgico, el adscrito evaluador y la fecha observados, para un residente con efecto aleatorio promedio. Las barras de error son IC 95%% de %s simulaciones de los parámetros fijos. Los puntos se desplazan horizontalmente para facilitar la lectura."),
           n_att, n_res, format(B_SIM, big.mark = ",")))
 
 prob_table <- function(outcome) {
@@ -178,23 +185,26 @@ prob_table <- function(outcome) {
   w <- reshape(x[, c("PGY_Year", "Complexity", "est", "lo", "hi")] %>%
                  mutate(cell = ci_pct(est, lo, hi)) %>% dplyr::select(PGY_Year, Complexity, cell),
                idvar = "PGY_Year", timevar = "Complexity", direction = "wide")
-  names(w) <- sub("^cell\\.", "", names(w)); names(w)[1] <- "PGY"
-  w$PGY <- paste0("PGY-", w$PGY)
+  names(w) <- sub("^cell\\.", "", names(w))
+  w[[1]] <- PGY_LAB[w[[1]]]; names(w)[1] <- L("PGY", "Año")
   rownames(w) <- NULL
   w
 }
 or_txt <- function(m, term) {
   cf <- coef(summary(m))[term, ]
-  sprintf("%s (95%% CI %s–%s)", num(exp(cf[1])), num(exp(cf[1] - 1.96 * cf[2])), num(exp(cf[1] + 1.96 * cf[2])))
+  sprintf(L("%s (95%% CI %s–%s)", "%s (IC 95%% %s–%s)"), num(exp(cf[1])), num(exp(cf[1] - 1.96 * cf[2])), num(exp(cf[1] + 1.96 * cf[2])))
 }
-write_fig_results("3", "Model-predicted probabilities", leg3, list(
-  list(heading = "Method", text = sprintf(
-    "Predicted probability of the top category(ies) from the Table 4 mixed models (%d attending evaluations, %d residents), standardized over observed procedure, approach, attending and timing; random effect = 0; 95%% CIs from %s draws of the fixed effects. Model PGY aOR per year: Zwisch %s; SIMPL %s.",
+write_fig_results("3", L("Model-predicted probabilities", "Probabilidades predichas por el modelo"), leg3, list(
+  list(heading = L("Method", "Método"), text = sprintf(
+    L("Predicted probability of the top category(ies) from the Table 4 mixed models (%d attending evaluations, %d residents), standardized over observed procedure, approach, attending and timing; random effect = 0; 95%% CIs from %s draws of the fixed effects. Model PGY aOR per year: Zwisch %s; SIMPL %s.",
+      "Probabilidad predicha de la(s) categoría(s) superior(es) con los modelos mixtos de la Tabla 4 (%d evaluaciones del adscrito, %d residentes), estandarizada sobre procedimiento, abordaje, adscrito y fecha observados; efecto aleatorio = 0; IC 95%% de %s simulaciones de los efectos fijos. RMa del año de residencia por año: Zwisch %s; SIMPL %s."),
     n_att, n_res, format(B_SIM, big.mark = ","), or_txt(m_z, "PGY_Year"), or_txt(m_s, "PGY_Year"))),
-  list(heading = "A. P(Zwisch = supervision only), % (95% CI), by case complexity",
-       data = prob_table("Zwisch: supervision only")),
-  list(heading = "B. P(SIMPL = practice-ready or exceptional), % (95% CI), by case complexity",
-       data = prob_table("SIMPL: practice-ready or exceptional"))
+  list(heading = L("A. P(Zwisch = supervision only), % (95% CI), by case complexity",
+                   "A. P(Zwisch = solo supervisión), % (IC 95%), por complejidad del caso"),
+       data = prob_table(OUT_Z)),
+  list(heading = L("B. P(SIMPL = practice-ready or exceptional), % (95% CI), by case complexity",
+                   "B. P(SIMPL = listo para la práctica o excepcional), % (IC 95%), por complejidad del caso"),
+       data = prob_table(OUT_S))
 ))
 
 # =============================================================================
@@ -220,21 +230,20 @@ heat_panel <- function(a, s, labels, title) {
     geom_tile(aes(fill = Freq), colour = "white", linewidth = 0.8) +
     geom_tile(data = diag_df, aes(x, y), fill = NA, colour = INK, linewidth = 0.5, width = 0.94, height = 0.94) +
     geom_text(aes(label = lab, colour = ink), size = 2.8) +
-    scale_fill_gradientn(colours = HEAT, limits = c(0, max(df$Freq)), name = "Pairs, n",
+    scale_fill_gradientn(colours = HEAT, limits = c(0, max(df$Freq)), name = L("Pairs, n", "Pares, n"),
                          guide = guide_colourbar(barheight = unit(60, "pt"), barwidth = unit(7, "pt"))) +
     scale_colour_identity() +
     scale_x_continuous(breaks = 1:K, labels = labels, expand = c(0, 0)) +
     scale_y_continuous(breaks = 1:K, labels = labels, expand = c(0, 0)) +
     coord_equal() +
-    labs(x = "Resident self-rating", y = "Attending rating", title = title) +
+    labs(x = L("Resident self-rating", "Autoevaluación del residente"), y = L("Attending rating", "Calificación del adscrito"), title = title) +
     theme_pub() +
     theme(axis.line = element_blank(), axis.ticks = element_blank(),
           axis.text.x = element_text(angle = 35, hjust = 1))
 }
-zw_ax <- c("Show and tell", "Active help", "Passive help", "Supervision only")
-sm_ax <- c("Unprepared", "Inexperienced", "Intermediate", "Practice-ready", "Exceptional")
-p4a <- heat_panel("Z_att", "Z_self", zw_ax, "Zwisch autonomy level")
-p4b <- heat_panel("S_att", "S_self", sm_ax, "SIMPL performance rating")
+# zw_ax / sm_ax (short level labels) are defined in EPA_helpers.R
+p4a <- heat_panel("Z_att", "Z_self", zw_ax, L("Zwisch autonomy level", "Autonomía de Zwisch"))   # short Spanish titles fit the panel
+p4b <- heat_panel("S_att", "S_self", sm_ax, L("SIMPL performance rating", "Desempeño SIMPL"))
 
 # Mean difference (self − attending) by PGY; 95% CI by cluster bootstrap of residents
 boot_mean <- function(x, id) {
@@ -247,17 +256,17 @@ boot_mean <- function(x, id) {
 }
 md <- do.call(rbind, lapply(c("Zwisch", "SIMPL"), function(sc) {
   a <- if (sc == "Zwisch") "Z" else "S"
-  do.call(rbind, lapply(c("Overall", levels(pairs$PGY)), function(g) {
-    sub <- if (g == "Overall") pairs else pairs[pairs$PGY == g, ]
+  do.call(rbind, lapply(c(OVERALL, levels(pairs$PGY)), function(g) {
+    sub <- if (g == OVERALL) pairs else pairs[pairs$PGY == g, ]
     diff <- sub[[paste0(a, "_self")]] - sub[[paste0(a, "_att")]]
     r <- boot_mean(diff, sub$Resident_ID)
     data.frame(Scale = sc, Group = g, n = nrow(sub), est = r["est"], lo = r["lo"], hi = r["hi"], row.names = NULL)
   }))
 }))
-md$Group <- factor(md$Group, levels = c(levels(pairs$PGY), "Overall"))
+md$Group <- factor(md$Group, levels = c(levels(pairs$PGY), OVERALL))
 md$Scale <- factor(md$Scale, levels = c("Zwisch", "SIMPL"))
 write.csv(md %>% mutate(across(c(est, lo, hi), ~ round(.x, 4))),
-          file.path(fig_res_dir, "Figure_4B_Mean_Difference.csv"), row.names = FALSE)
+          file.path(fig_res_dir, L("Figure_4B_Mean_Difference.csv", "Figura_4C_Diferencia_Media.csv")), row.names = FALSE)
 
 ylim_b <- max(abs(c(md$lo, md$hi)), 1) * 1.08
 n_lab  <- md %>% filter(Scale == "Zwisch") %>% transmute(Group, lab = paste0("n = ", n))
@@ -268,15 +277,15 @@ p4c <- ggplot(md, aes(Group, est, colour = Scale, shape = Scale)) +
   geom_errorbar(aes(ymin = lo, ymax = hi), width = 0, linewidth = 0.6, position = position_dodge(0.45)) +
   geom_point(size = 2.3, position = position_dodge(0.45), fill = "white", stroke = 0.8) +
   geom_text(data = n_lab, aes(Group, -ylim_b * 0.96, label = lab), inherit.aes = FALSE, size = 2.4, colour = INK2) +
-  annotate("text", x = 0.55, y = ylim_b * 0.93, label = "Self-rating higher than attending",
+  annotate("text", x = 0.55, y = ylim_b * 0.93, label = L("Self-rating higher than attending", "Autoevaluación mayor que la del adscrito"),
            hjust = 0, size = 2.5, colour = INK2, fontface = "italic") +
-  annotate("text", x = 0.55, y = -ylim_b * 0.80, label = "Self-rating lower than attending",
+  annotate("text", x = 0.55, y = -ylim_b * 0.80, label = L("Self-rating lower than attending", "Autoevaluación menor que la del adscrito"),
            hjust = 0, size = 2.5, colour = INK2, fontface = "italic") +
   scale_colour_manual(values = PAIR, name = NULL) +
   scale_shape_manual(values = c(Zwisch = 21, SIMPL = 22), name = NULL) +
   scale_y_continuous(limits = c(-ylim_b, ylim_b), labels = function(x) sub("^-", MINUS, sprintf("%.1f", x))) +
-  labs(x = NULL, y = paste0("Self ", MINUS, " attending rating (points)"),
-       title = "Mean difference by postgraduate year") +
+  labs(x = NULL, y = L(paste0("Self ", MINUS, " attending rating (points)"), paste0("Autoevaluación ", MINUS, " adscrito (puntos)")),
+       title = L("Mean difference by postgraduate year", "Diferencia media por año de residencia")) +
   theme_pub() +
   theme(legend.position = "top", legend.justification = "right",
         panel.grid.major.y = element_line(colour = GRID, linewidth = 0.3))
@@ -284,36 +293,45 @@ p4c <- ggplot(md, aes(Group, est, colour = Scale, shape = Scale)) +
 p4 <- ((p4a | p4b) / p4c) + plot_layout(heights = c(1.15, 1)) + plot_annotation(tag_levels = "A")
 save_fig(p4, "Figure_4_Self_vs_Attending.png", 7.5, 6.6)
 leg4 <- write_legend("Figure_4_Legend.md",
-  "Figure 4. Agreement Between Resident Self-Assessment and Attending Rating",
-  sprintf("(A, B) Cross-classification of attending ratings (rows) and resident self-ratings (columns) for the %d surgical cases with both an attending evaluation and a self-assessment, for (A) Zwisch autonomy level and (B) SIMPL performance rating; cell values are numbers of pairs and outlined cells mark exact agreement. (C) Mean difference between self-rating and attending rating (positive values indicate a higher self-rating) by postgraduate year and overall, with 95%% CIs from a cluster bootstrap resampling residents (%s replicates). The dashed line marks no difference; numbers below the axis are pairs per group.",
+  L("Figure 4. Agreement Between Resident Self-Assessment and Attending Rating",
+    "Figura 4. Concordancia entre la autoevaluación del residente y la calificación del adscrito"),
+  sprintf(L("(A, B) Cross-classification of attending ratings (rows) and resident self-ratings (columns) for the %d surgical cases with both an attending evaluation and a self-assessment, for (A) Zwisch autonomy level and (B) SIMPL performance rating; cell values are numbers of pairs and outlined cells mark exact agreement. (C) Mean difference between self-rating and attending rating (positive values indicate a higher self-rating) by postgraduate year and overall, with 95%% CIs from a cluster bootstrap resampling residents (%s replicates). The dashed line marks no difference; numbers below the axis are pairs per group.",
+            "(A, B) Clasificación cruzada de las calificaciones del adscrito (filas) y las autoevaluaciones del residente (columnas) en los %d casos quirúrgicos con evaluación del adscrito y autoevaluación, para (A) el nivel de autonomía de Zwisch y (B) la calificación de desempeño SIMPL; los valores de las celdas son números de pares y las celdas remarcadas indican concordancia exacta. (C) Diferencia media entre la autoevaluación y la calificación del adscrito (los valores positivos indican una autoevaluación mayor) por año de residencia y en total, con IC 95%% por bootstrap por conglomerados con remuestreo de residentes (%s réplicas). La línea discontinua indica ausencia de diferencia; los números bajo el eje son pares por grupo."),
           n_pairs, format(B_SIM, big.mark = ",")))
 
 xtab <- function(a, sv, labels) {
   K <- length(labels)
   tb <- table(factor(pairs[[a]], 1:K, labels = labels), factor(pairs[[sv]], 1:K, labels = labels))
-  out <- data.frame(`Attending \\ Self` = labels, matrix(as.integer(tb), nrow = K), check.names = FALSE)
-  names(out)[-1] <- labels
+  out <- data.frame(labels, matrix(as.integer(tb), nrow = K), check.names = FALSE)
+  names(out) <- c(L("Attending \\ Self", "Adscrito \\ Autoevaluación"), labels)
   out
 }
 agree_txt <- function(a, sv) {
   dd <- pairs[[sv]] - pairs[[a]]
-  sprintf("Exact agreement %d/%d (%s%%); within one level %d/%d (%s%%); self higher %d, self lower %d.",
+  sprintf(L("Exact agreement %d/%d (%s%%); within one level %d/%d (%s%%); self higher %d, self lower %d.",
+            "Concordancia exacta %d/%d (%s%%); dentro de un nivel %d/%d (%s%%); autoevaluación mayor %d, menor %d."),
           sum(dd == 0), length(dd), num(100 * mean(dd == 0), 1), sum(abs(dd) <= 1), length(dd),
           num(100 * mean(abs(dd) <= 1), 1), sum(dd > 0), sum(dd < 0))
 }
 md_tab <- md %>% transmute(Scale, Group = as.character(Group), n,
-                           `Mean difference (95% CI)` = fmt_ci(est, lo, hi),
-                           `CI excludes 0` = ifelse(lo > 0 | hi < 0, "yes", "no")) %>%
-  arrange(Scale, factor(Group, levels = c(levels(pairs$PGY), "Overall")))
-write_fig_results("4", "Self vs attending ratings", leg4, list(
-  list(heading = "A. Zwisch cross-classification (rows = attending, columns = self; counts)",
+                           diff = fmt_ci(est, lo, hi),
+                           excl = ifelse(lo > 0 | hi < 0, L("yes", "sí"), "no")) %>%
+  arrange(Scale, factor(Group, levels = c(levels(pairs$PGY), OVERALL))) %>% as.data.frame()
+names(md_tab) <- c(L("Scale", "Escala"), L("Group", "Grupo"), "n",
+                   L("Mean difference (95% CI)", "Diferencia media (IC 95%)"), L("CI excludes 0", "El IC excluye 0"))
+write_fig_results("4", L("Self vs attending ratings", "Autoevaluación vs calificación del adscrito"), leg4, list(
+  list(heading = L("A. Zwisch cross-classification (rows = attending, columns = self; counts)",
+                   "A. Clasificación cruzada de Zwisch (filas = adscrito, columnas = autoevaluación; conteos)"),
        text = agree_txt("Z_att", "Z_self"), data = xtab("Z_att", "Z_self", zw_ax)),
-  list(heading = "B. SIMPL cross-classification (rows = attending, columns = self; counts)",
+  list(heading = L("B. SIMPL cross-classification (rows = attending, columns = self; counts)",
+                   "B. Clasificación cruzada de SIMPL (filas = adscrito, columnas = autoevaluación; conteos)"),
        text = agree_txt("S_att", "S_self"), data = xtab("S_att", "S_self", sm_ax)),
-  list(heading = "C. Mean self − attending difference by PGY (cluster-bootstrap 95% CI)",
-       text = "Positive = resident rated self higher than the attending.", data = md_tab)
+  list(heading = L("C. Mean self − attending difference by PGY (cluster-bootstrap 95% CI)",
+                   "C. Diferencia media autoevaluación − adscrito por año de residencia (IC 95% por bootstrap por conglomerados)"),
+       text = L("Positive = resident rated self higher than the attending.",
+                "Positivo = el residente se calificó más alto que el adscrito."), data = md_tab)
 ))
 
 rebuild_all_md()
 save_session_info()
-message("Figures 2–4 written to: ", fig_dir)
+message(L("Figures 2–4 written to: ", "Figuras 2–4 guardadas en: "), fig_dir)

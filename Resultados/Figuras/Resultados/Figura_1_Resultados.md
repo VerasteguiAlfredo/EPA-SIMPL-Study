@@ -1,6 +1,6 @@
 # Resultados de la Figura 1 — Gráfico de bosque de las razones de momios ajustadas
 
-_Generado el 2026-10-17 19:20 a partir de EPA_SIMPL_Database.xlsx_
+_Generado el 2026-10-17 19:38 a partir de EPA_SIMPL_Database.xlsx_
 
 **Leyenda.** 
 Gráfico de bosque de las razones de momios ajustadas (RMa) e IC 95% de los modelos de regresión ordinal de efectos mixtos del nivel de autonomía de Zwisch (izquierda) y de la calificación de desempeño SIMPL (derecha), con base en 171 evaluaciones del adscrito de 35 residentes de Cirugía General. Los modelos incluyeron el año de residencia (por cada año adicional), la complejidad del caso, el procedimiento, el abordaje quirúrgico, el adscrito evaluador y el tiempo desde el inicio del estudio, con un intercepto aleatorio por residente. Los valores >1 indican mayor probabilidad de una calificación más alta. Los cuadros marcan las razones de momios ajustadas y las líneas horizontales sus IC 95%; la línea discontinua marca una razón de momios de 1; el eje x está en escala logarítmica.

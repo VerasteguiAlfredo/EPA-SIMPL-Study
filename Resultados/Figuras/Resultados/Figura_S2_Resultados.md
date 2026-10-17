@@ -1,6 +1,6 @@
 # Resultados de la Figura S2 — Calificaciones por adscrito
 
-_Generado el 2026-10-17 19:24 a partir de EPA_SIMPL_Database.xlsx_
+_Generado el 2026-10-17 19:42 a partir de EPA_SIMPL_Database.xlsx_
 
 **Leyenda.** 
 Distribución de (A) los niveles de autonomía de Zwisch y (B) las calificaciones de desempeño SIMPL asignados por cada uno de los 3 adscritos evaluadores (171 evaluaciones del adscrito). Las distribuciones no están ajustadas y reflejan en parte el año de residencia de los residentes que evaluó cada adscrito (Tabla suplementaria S3); las estimaciones ajustadas por adscrito se muestran en la Tabla 4.

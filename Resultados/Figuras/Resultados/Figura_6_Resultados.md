@@ -1,6 +1,6 @@
 # Resultados de la Figura 6 — Factibilidad y aceptabilidad
 
-_Generado el 2026-10-17 19:24 a partir de EPA_SIMPL_Database.xlsx_
+_Generado el 2026-10-17 19:42 a partir de EPA_SIMPL_Database.xlsx_
 
 **Leyenda.** 
 (A) Barras apiladas divergentes de las respuestas a los reactivos de percepción de 5 puntos en los formularios de evaluación del adscrito (n = 171) y de autoevaluación del residente (n = 81); las barras están centradas en la respuesta neutral, con las calificaciones menores a la izquierda y las mayores a la derecha. Los números a la derecha indican el porcentaje de formularios que calificaron el reactivo con 4 o 5. (B) Distribución del tiempo autorreportado para completar cada formulario de evaluación.

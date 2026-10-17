@@ -11,9 +11,13 @@ Dataset/
 *.RData
 *.rda
 
-# Resident-level outputs that list residents by initials
+# Resident-level outputs that list residents by initials (English and Spanish)
 Results/Figures/Results/Figure_S3_Results.md
 Results/Figures/Results/All_Figure_Results.md
+Results/Figures/PNG/Figure_S3_Resident_Variation.png
+Resultados/Figuras/Resultados/Figura_S3_Resultados.md
+Resultados/Figuras/Resultados/Todos_los_Resultados_de_Figuras.md
+Resultados/Figuras/PNG/Figura_S3.png
 
 # Old flat figure outputs from earlier script versions
 Results/Figures/*.png

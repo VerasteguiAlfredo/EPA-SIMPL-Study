@@ -1,6 +1,6 @@
 # Figure 3 results — Model-predicted probabilities
 
-_Generated 2026-10-16 16:38 from EPA_SIMPL_Database.xlsx_
+_Generated 2026-10-17 19:17 from EPA_SIMPL_Database.xlsx_
 
 **Legend.** 
 Predicted probability that the attending rated (A) the Zwisch level as supervision only and (B) SIMPL performance as practice-ready or exceptional, by postgraduate year and attending-rated case complexity. Estimates come from the mixed-effects ordinal models in Table 4 (171 attending evaluations, 35 residents), standardized over the observed procedure, surgical approach, evaluating attending, and timing, for a resident with an average random effect. Error bars are 95% CIs from 2,000 simulations of the fixed-effect parameters. Points are offset horizontally for legibility.

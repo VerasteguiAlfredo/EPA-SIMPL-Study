@@ -7,7 +7,8 @@ Analysis code for a prospective single-center study of intraoperative autonomy (
 ```
 surg_training_evaluation/
 ├── R Scripts/
-│   ├── run_all.R                          # runs the full analysis in order
+│   ├── run_all.R                          # runs the full analysis in order (English -> Results/)
+│   ├── run_all_es.R                       # same analysis, Spanish outputs -> Resultados/
 │   ├── EPA_helpers.R                      # paths, data loading, formatting, tests, table/figure writers
 │   ├── Tables/
 │   │   ├── EPA_Tables_1-3.R               # Tables 1–3 (residents, cases, ratings by PGY)
@@ -24,6 +25,9 @@ surg_training_evaluation/
     ├── Tables/  MD/ · HTML/ · All_Tables.docx
     ├── Figures/ PNG/ · Legends/ · Results/
     └── session_info.txt                   # R and package versions
+Resultados/                                # Spanish outputs (run_all_es.R)
+    ├── Tablas/   MD/ · HTML/ · Todas_las_Tablas.docx
+    └── Figuras/  PNG/ · Leyendas/ · Resultados/
 ```
 
 ## Running the analysis
@@ -31,6 +35,9 @@ surg_training_evaluation/
 1. Place the study database at `Dataset/EPA_SIMPL_Database.xlsx` (sheet `Data`).
 2. Set `project_dir` at the top of `R Scripts/EPA_helpers.R` and `scripts_root` in `R Scripts/run_all.R` to your local paths.
 3. Run `R Scripts/run_all.R` (about 2–3 minutes). Missing packages are installed automatically.
+4. For the Spanish version of every table, figure, legend and results file, run `R Scripts/run_all_es.R`
+   (or set `Sys.setenv(EPA_LANG = "es")` before sourcing a single script). The analysis is identical;
+   only the language and output folders change.
 
 Main packages: `readxl`, `dplyr`, `tidyr`, `knitr`, `ordinal`, `ggplot2`, `patchwork`, `forestploter`, `MASS`.
 

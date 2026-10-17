@@ -13,6 +13,7 @@
 #   R Scripts/Figures  - figure scripts
 #   EPA_helpers.R      - in "R Scripts", "R Scripts/Tables" or "R Scripts/Figures"
 # Data and output paths are set once in EPA_helpers.R.
+# For the Spanish version (Resultados/Tablas, Resultados/Figuras) run run_all_es.R.
 # =============================================================================
 
 scripts_root <- Sys.getenv(
@@ -61,5 +62,5 @@ loose <- loose[!dir.exists(file.path(fig_dir, loose))]
 if (length(loose))
   message("\nNote: ", length(loose), " older file(s) remain directly in Results/Figures and can be deleted:\n  ",
           paste(loose, collapse = "\n  "))
-message(sprintf("\nAll outputs written to: %s  (total %.1f min)",
-                file.path(project_dir, "Results"), as.numeric(difftime(Sys.time(), t_all, units = "mins"))))
+message(sprintf(L("\nAll outputs written to: %s  (total %.1f min)", "\nTodos los resultados guardados en: %s  (total %.1f min)"),
+                res_dir, as.numeric(difftime(Sys.time(), t_all, units = "mins"))))

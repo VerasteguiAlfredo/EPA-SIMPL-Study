@@ -1,6 +1,6 @@
 # Figure 2 results — Attending ratings by postgraduate year
 
-_Generated 2026-10-16 16:37 from EPA_SIMPL_Database.xlsx_
+_Generated 2026-10-17 19:17 from EPA_SIMPL_Database.xlsx_
 
 **Legend.** 
 Distribution of (A) Zwisch autonomy levels and (B) SIMPL performance ratings assigned by attending surgeons across 171 intraoperative evaluations of 35 residents, shown as the percentage of evaluations within each postgraduate year. Darker shading indicates greater autonomy or higher performance. Numbers above bars are evaluations per postgraduate year; segment labels are shown for categories representing at least 8% of evaluations.

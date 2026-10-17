@@ -1,6 +1,6 @@
 # Figure S1 results — Zwisch × SIMPL
 
-_Generated 2026-10-16 16:38 from EPA_SIMPL_Database.xlsx_
+_Generated 2026-10-17 19:18 from EPA_SIMPL_Database.xlsx_
 
 **Legend.** 
 Cross-classification of Zwisch autonomy level and SIMPL performance rating assigned by the attending in the same evaluation (171 attending evaluations, 35 residents); cell values are numbers of evaluations. Correlations are Spearman ρ and Kendall τ-b, with 95% CIs from a cluster bootstrap resampling residents (2,000 replicates).

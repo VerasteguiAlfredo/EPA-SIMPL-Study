@@ -1,0 +1,3 @@
+**Figura suplementaria S3. Variación entre residentes en las calificaciones de autonomía y desempeño**
+
+Gráficos de oruga de los interceptos aleatorios de cada residente (modos condicionales, escala log-odds) con intervalos del 95% de los modelos ordinales de efectos mixtos de la Tabla 4 para (A) autonomía de Zwisch y (B) desempeño SIMPL (171 evaluaciones del adscrito, 35 residentes). Los valores mayores de 0 indican residentes calificados por encima de lo esperado para su año de residencia, la complejidad del caso, el procedimiento, el abordaje, el adscrito y la fecha; los residentes se ordenan según su estimación y se colorean por año de residencia.

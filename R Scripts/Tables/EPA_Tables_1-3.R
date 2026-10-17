@@ -29,12 +29,8 @@ if (!exists("EPA_HELPERS_LOADED")) {
 set.seed(2026)  # reproducible Monte Carlo Fisher P values
 
 d <- load_epa()
-study_period <- if (format(min(d$Eval_Date), "%Y") == format(max(d$Eval_Date), "%Y")) {
-  paste0(format(min(d$Eval_Date), "%B"), "–", format(max(d$Eval_Date), "%B %Y"))
-} else {
-  paste0(format(min(d$Eval_Date), "%B %Y"), "–", format(max(d$Eval_Date), "%B %Y"))
-}
-pgy_note <- "Comparisons are across postgraduate years."
+study_period <- period_text(d$Eval_Date)
+pgy_note <- L("Comparisons are across postgraduate years.", "Las comparaciones son entre años de residencia.")
 
 # =============================================================================
 # TABLE 1 — Residents (one row per resident)
@@ -57,18 +53,21 @@ if (length(incons))
           " — most frequent value used. Resolve in the database before final tables.")
 
 t1 <- build_table(residents, "PGY", list(
-  list(type = "cont", var = "Age",        label = "Age, years"),
-  list(type = "bin",  var = "Sex",        label = "Female sex", level = "Female"),
-  list(type = "cont", var = "Cases",      label = "Surgical cases evaluated per resident"),
-  list(type = "cont", var = "Att_forms",  label = "Attending evaluations per resident"),
-  list(type = "cont", var = "Self_forms", label = "Self-assessments per resident")
+  list(type = "cont", var = "Age",        label = L("Age, years", "Edad, años")),
+  list(type = "bin",  var = "Sex",        label = L("Female sex", "Sexo femenino"), level = levels(d$Sex)[2]),
+  list(type = "cont", var = "Cases",      label = L("Surgical cases evaluated per resident", "Casos quirúrgicos evaluados por residente")),
+  list(type = "cont", var = "Att_forms",  label = L("Attending evaluations per resident", "Evaluaciones del adscrito por residente")),
+  list(type = "cont", var = "Self_forms", label = L("Self-assessments per resident", "Autoevaluaciones por residente"))
 ))
 write_table(
   t1$table, "1",
-  "Characteristics of Participating General Surgery Residents by Postgraduate Year",
-  sprintf("Demographic characteristics and evaluation volume of the %d residents assessed with the SIMPL-based EPA model at a single academic center (%s). Each resident is counted once.",
+  L("Characteristics of Participating General Surgery Residents by Postgraduate Year",
+    "Características de los residentes de Cirugía General participantes por año de residencia"),
+  sprintf(L("Demographic characteristics and evaluation volume of the %d residents assessed with the SIMPL-based EPA model at a single academic center (%s). Each resident is counted once.",
+            "Características demográficas y volumen de evaluaciones de los %d residentes evaluados con el modelo de EPAs basado en SIMPL en un solo centro académico (%s). Cada residente se cuenta una vez."),
           nrow(residents), study_period),
-  c("Data are n (%) or median (IQR). Percentages use the column total of non-missing values as denominator.",
+  c(L("Data are n (%) or median (IQR). Percentages use the column total of non-missing values as denominator.",
+      "Los datos son n (%) o mediana (RIC). Los porcentajes usan como denominador el total de valores no faltantes de cada columna."),
     pgy_note, abbr("IQR", "PGY")),
   t1$header
 )
@@ -85,27 +84,31 @@ cases <- d %>%
     Approach    = first(Approach),
     Complexity  = if (first(Evaluator_Type) == 1) first(Complexity) else factor(NA, levels = levels(d$Complexity)),
     Attending   = if (first(Evaluator_Type) == 1) first(Attending)  else factor(NA, levels = levels(d$Attending)),
-    Month       = format(first(Eval_Date), "%B"),
+    Month       = cap1(month_name(first(Eval_Date))),
     Self_done   = factor(ifelse(any(Evaluator_Type == 2), "Yes", "No"), levels = c("Yes", "No")),
     .groups = "drop"
   ) %>%
-  mutate(Month = factor(Month, levels = unique(format(sort(d$Eval_Date), "%B"))))
+  mutate(Month = factor(Month, levels = unique(cap1(month_name(sort(d$Eval_Date))))))
 
 t2 <- build_table(cases, "PGY", list(
-  list(type = "cat", var = "Procedure_f", label = "Procedure"),
-  list(type = "cat", var = "Approach",    label = "Surgical approach"),
-  list(type = "cat", var = "Complexity",  label = "Case complexity (attending-rated)"),
-  list(type = "cat", var = "Attending",   label = "Evaluating attending"),
-  list(type = "cat", var = "Month",       label = "Month of evaluation"),
-  list(type = "bin", var = "Self_done",   label = "Resident self-assessment completed", level = "Yes")
+  list(type = "cat", var = "Procedure_f", label = L("Procedure", "Procedimiento")),
+  list(type = "cat", var = "Approach",    label = L("Surgical approach", "Abordaje quirúrgico")),
+  list(type = "cat", var = "Complexity",  label = L("Case complexity (attending-rated)", "Complejidad del caso (según el adscrito)")),
+  list(type = "cat", var = "Attending",   label = L("Evaluating attending", "Adscrito evaluador")),
+  list(type = "cat", var = "Month",       label = L("Month of evaluation", "Mes de evaluación")),
+  list(type = "bin", var = "Self_done",   label = L("Resident self-assessment completed", "Autoevaluación del residente completada"), level = "Yes")
 ))
 write_table(
   t2$table, "2",
-  "Characteristics of Evaluated Surgical Cases by Postgraduate Year",
-  sprintf("Procedure, approach, complexity, evaluator, and timing of the %d surgical cases in which residents were assessed. Each case is counted once and attributed to the operating resident's postgraduate year.",
+  L("Characteristics of Evaluated Surgical Cases by Postgraduate Year",
+    "Características de los casos quirúrgicos evaluados por año de residencia"),
+  sprintf(L("Procedure, approach, complexity, evaluator, and timing of the %d surgical cases in which residents were assessed. Each case is counted once and attributed to the operating resident's postgraduate year.",
+            "Procedimiento, abordaje, complejidad, evaluador y fecha de los %d casos quirúrgicos en los que se evaluó a los residentes. Cada caso se cuenta una vez y se asigna al año de residencia del residente que operó."),
           nrow(cases)),
-  c("Data are n (%). Percentages use the column total of non-missing values as denominator.",
-    "Case attributes were taken from the attending evaluation; when more than one attending form existed for a case, the first recorded form was used. Missing indicates cases with a self-assessment only.",
+  c(L("Data are n (%). Percentages use the column total of non-missing values as denominator.",
+      "Los datos son n (%). Los porcentajes usan como denominador el total de valores no faltantes de cada columna."),
+    L("Case attributes were taken from the attending evaluation; when more than one attending form existed for a case, the first recorded form was used. Missing indicates cases with a self-assessment only.",
+      "Las características del caso se tomaron de la evaluación del adscrito; cuando un caso tuvo más de un formulario del adscrito, se usó el primero registrado. Sin dato indica casos con solo autoevaluación."),
     pgy_note, abbr("PGY")),
   t2$header
 )
@@ -115,23 +118,28 @@ write_table(
 # =============================================================================
 att <- d %>% filter(Evaluator_Type == 1)
 t3 <- build_table(att, "PGY", list(
-  list(type = "cat",  var = "Zwisch",            label = "Zwisch autonomy level"),
-  list(type = "cont", var = "Zwisch_Autonomy",   label = "Zwisch score (1–4)"),
-  list(type = "cat",  var = "SIMPL",             label = "SIMPL performance rating"),
-  list(type = "cont", var = "SIMPL_Performance", label = "SIMPL score (1–5)")
+  list(type = "cat",  var = "Zwisch",            label = L("Zwisch autonomy level", "Nivel de autonomía de Zwisch")),
+  list(type = "cont", var = "Zwisch_Autonomy",   label = L("Zwisch score (1–4)", "Puntaje de Zwisch (1–4)")),
+  list(type = "cat",  var = "SIMPL",             label = L("SIMPL performance rating", "Calificación de desempeño SIMPL")),
+  list(type = "cont", var = "SIMPL_Performance", label = L("SIMPL score (1–5)", "Puntaje SIMPL (1–5)"))
 ))
 write_table(
   t3$table, "3",
-  "Attending-Rated Intraoperative Autonomy and Performance by Postgraduate Year",
-  sprintf("Distribution of Zwisch autonomy levels and SIMPL performance ratings assigned by attending surgeons across %d intraoperative evaluations. Resident self-assessments are excluded.",
+  L("Attending-Rated Intraoperative Autonomy and Performance by Postgraduate Year",
+    "Autonomía y desempeño intraoperatorios calificados por el adscrito por año de residencia"),
+  sprintf(L("Distribution of Zwisch autonomy levels and SIMPL performance ratings assigned by attending surgeons across %d intraoperative evaluations. Resident self-assessments are excluded.",
+            "Distribución de los niveles de autonomía de Zwisch y de las calificaciones de desempeño SIMPL asignados por los cirujanos adscritos en %d evaluaciones intraoperatorias. Se excluyen las autoevaluaciones de los residentes."),
           nrow(att)),
-  c("Data are n (%) or median (IQR). Percentages use the column total as denominator.",
-    "Zwisch scale: 1, show and tell; 2, active help; 3, passive help; 4, supervision only. SIMPL scale: 1, unprepared/critical deficiency; 2, inexperienced with procedure; 3, intermediate; 4, practice-ready; 5, exceptional.",
-    paste(pgy_note, "Evaluations are not independent (multiple per resident); P values are descriptive."),
+  c(L("Data are n (%) or median (IQR). Percentages use the column total as denominator.",
+      "Los datos son n (%) o mediana (RIC). Los porcentajes usan como denominador el total de cada columna."),
+    L("Zwisch scale: 1, show and tell; 2, active help; 3, passive help; 4, supervision only. SIMPL scale: 1, unprepared/critical deficiency; 2, inexperienced with procedure; 3, intermediate; 4, practice-ready; 5, exceptional.",
+      "Escala de Zwisch: 1, demuestra y explica; 2, ayuda activa; 3, ayuda pasiva; 4, solo supervisión. Escala SIMPL: 1, no preparado/deficiencia crítica; 2, falta de experiencia con el procedimiento; 3, intermedio; 4, listo para la práctica; 5, excepcional."),
+    paste(pgy_note, L("Evaluations are not independent (multiple per resident); P values are descriptive.",
+                      "Las evaluaciones no son independientes (varias por residente); los valores de P son descriptivos.")),
     abbr("IQR", "PGY")),
   t3$header
 )
 
 rebuild_all_md()
 save_session_info()
-message("Tables 1–3 written to: ", tab_dir)
+message(L("Tables 1–3 written to: ", "Tablas 1–3 guardadas en: "), tab_dir)

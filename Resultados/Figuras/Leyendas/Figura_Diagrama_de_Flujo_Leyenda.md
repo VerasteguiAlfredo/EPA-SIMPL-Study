@@ -1,0 +1,3 @@
+**Figura. Diagrama de flujo del estudio**
+
+Flujo de formularios de evaluación, casos quirúrgicos y residentes en el estudio (abril–agosto de 2026). Los recuadros continuos muestran las muestras analíticas y las tablas y figuras que las usan; los recuadros discontinuos muestran exclusiones y análisis de sensibilidad. Los casos marcados se identificaron durante la verificación de datos (dos formularios del adscrito en un caso, formularios de distintos residentes bajo un mismo número de caso, discrepancia de procedimiento, abordaje o fecha entre formularios pareados, o codificación inconsistente del evaluador). Abreviaturas: EPA, actividad profesional confiable; R1–R5, residente de primer a quinto año; SIMPL, System for Improving and Measuring Procedural Learning.

@@ -1,6 +1,6 @@
 # Figure 1 results — Forest plot of adjusted odds ratios
 
-_Generated 2026-10-16 16:34 from EPA_SIMPL_Database.xlsx_
+_Generated 2026-10-17 19:14 from EPA_SIMPL_Database.xlsx_
 
 **Legend.** 
 Forest plot of adjusted odds ratios (aORs) and 95% CIs from mixed-effects ordinal regression models of the Zwisch autonomy level (left) and SIMPL performance rating (right), based on 171 attending evaluations of 35 general surgery residents. Models included postgraduate year (per 1-year increase), case complexity, procedure, surgical approach, evaluating attending, and time since study start, with a random intercept for resident. Values >1 indicate higher odds of a higher rating. Squares mark adjusted odds ratios and horizontal lines their 95% CIs; the dashed line marks an odds ratio of 1; the x-axis is on a logarithmic scale.

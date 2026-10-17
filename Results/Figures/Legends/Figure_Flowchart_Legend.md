@@ -1,0 +1,3 @@
+**Figure. Study Flow Diagram**
+
+Flow of evaluation forms, surgical cases, and residents through the study (April–August 2026). Solid boxes show the analytic samples and the tables and figures that use them; dashed boxes show exclusions and sensitivity analyses. Flagged cases were identified during data verification (two attending forms for one case, forms from different residents under one case number, mismatched procedure, approach, or date between paired forms, or inconsistent evaluator coding). Abbreviations: EPA, entrustable professional activity; PGY, postgraduate year; SIMPL, System for Improving and Measuring Procedural Learning.

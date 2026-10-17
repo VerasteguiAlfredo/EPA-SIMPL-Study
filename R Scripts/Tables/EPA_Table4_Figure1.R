@@ -72,30 +72,29 @@ re_stats <- function(m) {
 }
 
 # ---- Row layout -------------------------------------------------------------
+# Model terms are built from the factor levels, so they work in either language
 r <- function(label, term, type) data.frame(label = label, term = term, type = type, stringsAsFactors = FALSE)
 layout_rows <- function(pgy_block) rbind(
   pgy_block,
-  r("Case complexity (attending-rated)", NA, "header"),
-  r("Easy", NA, "ref"), r("Moderate", "ComplexityModerate", "level"), r("Difficult", "ComplexityDifficult", "level"),
-  r("Procedure", NA, "header"),
-  r("Appendectomy", NA, "ref"), r("Cholecystectomy", "Procedure_fCholecystectomy", "level"),
-  r("Inguinal hernia repair", "Procedure_fInguinal hernia repair", "level"),
-  r("Surgical approach", NA, "header"),
-  r("Open", NA, "ref"), r("Laparoscopic", "ApproachLaparoscopic", "level"),
-  r("Evaluating attending", NA, "header"),
-  r("Attending 1", NA, "ref"), r("Attending 2", "AttendingAttending 2", "level"),
-  r("Attending 3", "AttendingAttending 3", "level"),
-  r("Time since study start, per month", "Months", "single")
+  r(L("Case complexity (attending-rated)", "Complejidad del caso (según el adscrito)"), NA, "header"),
+  r(CX_LAB[1], NA, "ref"), r(CX_LAB[2:3], paste0("Complexity", CX_LAB[2:3]), "level"),
+  r(L("Procedure", "Procedimiento"), NA, "header"),
+  r(PROC_LAB[1], NA, "ref"), r(PROC_LAB[2:3], paste0("Procedure_f", PROC_LAB[2:3]), "level"),
+  r(L("Surgical approach", "Abordaje quirúrgico"), NA, "header"),
+  r(APP_LAB[1], NA, "ref"), r(APP_LAB[2], paste0("Approach", APP_LAB[2]), "level"),
+  r(L("Evaluating attending", "Adscrito evaluador"), NA, "header"),
+  r(ATT_LAB[1], NA, "ref"), r(ATT_LAB[2:3], paste0("Attending", ATT_LAB[2:3]), "level"),
+  r(L("Time since study start, per month", "Tiempo desde el inicio del estudio, por mes"), "Months", "single")
 )
-pgy_cont <- r("Postgraduate year, per 1-year increase", "PGY_num", "single")
-pgy_cat  <- rbind(r("Postgraduate year", NA, "header"), r("PGY-1", NA, "ref"),
-                  r(paste0("PGY-", 2:5), paste0("PGY_catPGY-", 2:5), "level"))
+pgy_cont <- r(L("Postgraduate year, per 1-year increase", "Año de residencia, por cada año adicional"), "PGY_num", "single")
+pgy_cat  <- rbind(r(L("Postgraduate year", "Año de residencia"), NA, "header"), r(PGY_LAB[1], NA, "ref"),
+                  r(PGY_LAB[2:5], paste0("PGY_cat", PGY_LAB[2:5]), "level"))
 
 build_or_table <- function(rows, mz, ms) {
   tz <- tidy_or(mz); ts <- tidy_or(ms)
   cell <- function(t, R) {
     if (R$type == "header") return(c("", ""))
-    if (R$type == "ref")    return(c("1.00 [Reference]", ""))
+    if (R$type == "ref")    return(c(REF_CELL, ""))
     x <- t[t$term == R$term, ]
     c(fmt_or(x$or, x$lo, x$hi), fmt_p(x$p))
   }
@@ -106,41 +105,51 @@ build_or_table <- function(rows, mz, ms) {
   })
   rz <- re_stats(mz); rs <- re_stats(ms)
   out <- c(out, list(
-    c(bold("Random effect (resident)"), "", "", "", ""),
-    c(indent("Intercept variance"), num(rz["var"]), "", num(rs["var"]), ""),
-    c(indent("Intraclass correlation coefficient"), num(rz["icc"]), "", num(rs["icc"]), "")
+    c(bold(L("Random effect (resident)", "Efecto aleatorio (residente)")), "", "", "", ""),
+    c(indent(L("Intercept variance", "Varianza del intercepto")), num(rz["var"]), "", num(rs["var"]), ""),
+    c(indent(L("Intraclass correlation coefficient", "Coeficiente de correlación intraclase")), num(rz["icc"]), "", num(rs["icc"]), "")
   ))
   tab <- as.data.frame(do.call(rbind, out), stringsAsFactors = FALSE)
   names(tab) <- c("Characteristic", "z_or", "z_p", "s_or", "s_p")
   tab
 }
 
-hdr_md   <- c("Characteristic", "Zwisch autonomy, aOR (95% CI)", "P value",
-              "SIMPL performance, aOR (95% CI)", "P value")
-hdr_html <- c("Characteristic", "aOR (95% CI)", "P value", "aOR (95% CI)", "P value")
-span4    <- list(list("", 1), list("Zwisch autonomy", 2), list("SIMPL performance", 2))
+ZW_AUT <- L("Zwisch autonomy", "Autonomía de Zwisch")
+SM_PERF <- L("SIMPL performance", "Desempeño SIMPL")
+hdr_md   <- c(CHAR, paste0(ZW_AUT, ", ", AOR_CI), PVAL, paste0(SM_PERF, ", ", AOR_CI), PVAL)
+hdr_html <- c(CHAR, AOR_CI, PVAL, AOR_CI, PVAL)
+span4    <- list(list("", 1), list(ZW_AUT, 2), list(SM_PERF, 2))
 
 model_notes <- function(extra = NULL) c(
-  sprintf("Mixed-effects cumulative logit (proportional odds) models fitted to %d attending evaluations of %d residents, with a random intercept for resident (adaptive Gauss–Hermite quadrature, 10 nodes). All variables shown were entered simultaneously.", n_obs, n_res),
-  "An aOR >1 indicates higher odds of a higher Zwisch autonomy level or SIMPL performance rating. P values are from Wald tests.",
+  sprintf(L("Mixed-effects cumulative logit (proportional odds) models fitted to %d attending evaluations of %d residents, with a random intercept for resident (adaptive Gauss–Hermite quadrature, 10 nodes). All variables shown were entered simultaneously.",
+            "Modelos de efectos mixtos de logit acumulado (odds proporcionales) ajustados a %d evaluaciones del adscrito de %d residentes, con un intercepto aleatorio por residente (cuadratura adaptativa de Gauss-Hermite, 10 nodos). Todas las variables mostradas se incluyeron simultáneamente."), n_obs, n_res),
+  L("An aOR >1 indicates higher odds of a higher Zwisch autonomy level or SIMPL performance rating. P values are from Wald tests.",
+    "Una RMa >1 indica mayor probabilidad de un nivel de autonomía de Zwisch o de una calificación de desempeño SIMPL más altos. Los valores de P provienen de pruebas de Wald."),
   extra,
-  "Intraclass correlation coefficient computed on the latent scale as σ²<sub>resident</sub> / (σ²<sub>resident</sub> + π²/3).",
+  L("Intraclass correlation coefficient computed on the latent scale as σ²<sub>resident</sub> / (σ²<sub>resident</sub> + π²/3).",
+    "Coeficiente de correlación intraclase calculado en la escala latente como σ²<sub>residente</sub> / (σ²<sub>residente</sub> + π²/3)."),
   abbr("aOR", "CI", "PGY")
 )
 
 # ---- Table 4 and Table S1 ---------------------------------------------------
 write_table(
   build_or_table(layout_rows(pgy_cont), m_z, m_s), "4",
-  "Factors Associated With Attending-Rated Intraoperative Autonomy and Performance",
-  "Adjusted odds ratios from mixed-effects ordinal regression models of Zwisch autonomy level and SIMPL performance rating, accounting for repeated evaluations of the same resident.",
-  model_notes("Postgraduate year was modeled as a continuous variable (per 1-year increase); a categorical specification is shown in Supplementary Table S1. Case complexity reflects the attending's rating."),
+  L("Factors Associated With Attending-Rated Intraoperative Autonomy and Performance",
+    "Factores asociados con la autonomía y el desempeño intraoperatorios calificados por el adscrito"),
+  L("Adjusted odds ratios from mixed-effects ordinal regression models of Zwisch autonomy level and SIMPL performance rating, accounting for repeated evaluations of the same resident.",
+    "Razones de momios ajustadas de modelos de regresión ordinal de efectos mixtos del nivel de autonomía de Zwisch y de la calificación de desempeño SIMPL, que consideran las evaluaciones repetidas del mismo residente."),
+  model_notes(L("Postgraduate year was modeled as a continuous variable (per 1-year increase); a categorical specification is shown in Supplementary Table S1. Case complexity reflects the attending's rating.",
+                "El año de residencia se modeló como variable continua (por cada año adicional); la especificación categórica se muestra en la Tabla suplementaria S1. La complejidad del caso corresponde a la calificación del adscrito.")),
   hdr_md, hdr_html, span4
 )
 write_table(
   build_or_table(layout_rows(pgy_cat), m_zc, m_sc), "S1",
-  "Sensitivity Analysis With Postgraduate Year Modeled as a Categorical Variable",
-  "Adjusted odds ratios from the same mixed-effects ordinal models as Table 4, with each postgraduate year compared with PGY-1.",
-  model_notes("Very large odds ratios and wide confidence intervals for later postgraduate years reflect near-complete separation (almost no PGY-1 resident reached the highest categories and almost all PGY-5 residents did); the per-year specification in Table 4 is therefore the primary analysis."),
+  L("Sensitivity Analysis With Postgraduate Year Modeled as a Categorical Variable",
+    "Análisis de sensibilidad con el año de residencia modelado como variable categórica"),
+  L("Adjusted odds ratios from the same mixed-effects ordinal models as Table 4, with each postgraduate year compared with PGY-1.",
+    "Razones de momios ajustadas de los mismos modelos ordinales de efectos mixtos de la Tabla 4, comparando cada año de residencia con R1."),
+  model_notes(L("Very large odds ratios and wide confidence intervals for later postgraduate years reflect near-complete separation (almost no PGY-1 resident reached the highest categories and almost all PGY-5 residents did); the per-year specification in Table 4 is therefore the primary analysis.",
+                "Las razones de momios muy grandes y los intervalos de confianza amplios en los años de residencia superiores reflejan separación casi completa (casi ningún R1 alcanzó las categorías más altas y casi todos los R5 sí); por ello, la especificación por año de la Tabla 4 es el análisis principal.")),
   hdr_md, hdr_html, span4
 )
 
@@ -156,13 +165,15 @@ fp <- data.frame(
   stringsAsFactors = FALSE
 )
 # Commas inside the CI: the en dash does not render in every PNG font
-txt_or <- function(or, lo, hi, type) ifelse(type == "ref", "Reference",
+txt_or <- function(or, lo, hi, type) ifelse(type == "ref", L("Reference", "Referencia"),
                                      ifelse(is.na(or), "", sprintf("%.2f (%.2f, %.2f)", or, lo, hi)))
-fp$`Zwisch autonomy\naOR (95% CI)`   <- txt_or(fp$z_or, fp$z_lo, fp$z_hi, rows$type)
-fp$`SIMPL performance\naOR (95% CI)` <- txt_or(fp$s_or, fp$s_lo, fp$s_hi, rows$type)
+hz <- paste0(ZW_AUT, "\n", AOR_CI); hs <- paste0(SM_PERF, "\n", AOR_CI)
+fp[[hz]] <- txt_or(fp$z_or, fp$z_lo, fp$z_hi, rows$type)
+fp[[hs]] <- txt_or(fp$s_or, fp$s_lo, fp$s_hi, rows$type)
 fp$` `  <- strrep(" ", 48)   # plotting column, Zwisch
 fp$`  ` <- strrep(" ", 48)   # plotting column, SIMPL
-plot_df <- fp[, c("Characteristic", " ", "Zwisch autonomy\naOR (95% CI)", "  ", "SIMPL performance\naOR (95% CI)")]
+plot_df <- fp[, c("Characteristic", " ", hz, "  ", hs)]
+names(plot_df)[1] <- CHAR
 
 all_ci <- c(fp$z_lo, fp$z_hi, fp$s_lo, fp$s_hi)
 ticks  <- c(0.1, 0.3, 1, 3, 10, 30, 100)
@@ -183,8 +194,8 @@ p <- forest(
   est = list(fp$z_or, fp$s_or), lower = list(fp$z_lo, fp$s_lo), upper = list(fp$z_hi, fp$s_hi),
   ci_column = c(2, 4), ref_line = 1, x_trans = "log",
   xlim = c(xmin, xmax), ticks_at = xticks,
-  xlab = c("Adjusted odds ratio (log scale)", "Adjusted odds ratio (log scale)"),
-  arrow_lab = c("Lower rating", "Higher rating"),
+  xlab = rep(L("Adjusted odds ratio (log scale)", "Razón de momios ajustada (escala log)"), 2),
+  arrow_lab = L(c("Lower rating", "Higher rating"), c("Menor calificación", "Mayor calificación")),
   theme = tm
 )
 p <- edit_plot(p, row = which(rows$type %in% c("header", "single")), col = 1, gp = gpar(fontface = "bold"))
@@ -192,14 +203,17 @@ p <- edit_plot(p, col = c(1, 3, 5), part = "header", which = "text",
                hjust = unit(0, "npc"), x = unit(0.02, "npc"))
 
 wh <- get_wh(plot = p, unit = "in")
-png(file.path(fig_png_dir, "Figure_1_Forest_Plot.png"),
+png(file.path(fig_png_dir, fig_file("Figure_1_Forest_Plot.png")),
     width = wh[1] + 0.2, height = wh[2] + 0.2, units = "in", res = 600, bg = "white")
 grid.newpage(); grid.draw(p)
 invisible(dev.off())
 
-fig1_legend <- sprintf("Forest plot of adjusted odds ratios (aORs) and 95%% CIs from mixed-effects ordinal regression models of the Zwisch autonomy level (left) and SIMPL performance rating (right), based on %d attending evaluations of %d general surgery residents. Models included postgraduate year (per 1-year increase), case complexity, procedure, surgical approach, evaluating attending, and time since study start, with a random intercept for resident. Values >1 indicate higher odds of a higher rating. Squares mark adjusted odds ratios and horizontal lines their 95%% CIs; the dashed line marks an odds ratio of 1; the x-axis is on a logarithmic scale.", n_obs, n_res)
-writeLines(c("**Figure 1. Adjusted Associations With Attending-Rated Intraoperative Autonomy and Performance**",
-             "", fig1_legend), file.path(fig_legend_dir, "Figure_1_Legend.md"), useBytes = TRUE)
+fig1_legend <- write_legend("Figure_1_Legend.md",
+  L("Figure 1. Adjusted Associations With Attending-Rated Intraoperative Autonomy and Performance",
+    "Figura 1. Asociaciones ajustadas con la autonomía y el desempeño intraoperatorios calificados por el adscrito"),
+  sprintf(L("Forest plot of adjusted odds ratios (aORs) and 95%% CIs from mixed-effects ordinal regression models of the Zwisch autonomy level (left) and SIMPL performance rating (right), based on %d attending evaluations of %d general surgery residents. Models included postgraduate year (per 1-year increase), case complexity, procedure, surgical approach, evaluating attending, and time since study start, with a random intercept for resident. Values >1 indicate higher odds of a higher rating. Squares mark adjusted odds ratios and horizontal lines their 95%% CIs; the dashed line marks an odds ratio of 1; the x-axis is on a logarithmic scale.",
+            "Gráfico de bosque de las razones de momios ajustadas (RMa) e IC 95%% de los modelos de regresión ordinal de efectos mixtos del nivel de autonomía de Zwisch (izquierda) y de la calificación de desempeño SIMPL (derecha), con base en %d evaluaciones del adscrito de %d residentes de Cirugía General. Los modelos incluyeron el año de residencia (por cada año adicional), la complejidad del caso, el procedimiento, el abordaje quirúrgico, el adscrito evaluador y el tiempo desde el inicio del estudio, con un intercepto aleatorio por residente. Los valores >1 indican mayor probabilidad de una calificación más alta. Los cuadros marcan las razones de momios ajustadas y las líneas horizontales sus IC 95%%; la línea discontinua marca una razón de momios de 1; el eje x está en escala logarítmica."),
+          n_obs, n_res))
 
 # Numbers behind Figure 1 (for interpretation)
 res_row <- function(t, term) {
@@ -210,22 +224,23 @@ res_row <- function(t, term) {
 f1 <- do.call(rbind, lapply(seq_len(nrow(rows)), function(i) {
   R <- rows[i, ]
   if (R$type == "header") return(c(paste0("**", R$label, "**"), "", "", "", ""))
-  if (R$type == "ref")    return(c(paste0("&emsp;", R$label, " (reference)"), "1.00", "", "1.00", ""))
+  if (R$type == "ref")    return(c(paste0("&emsp;", R$label, L(" (reference)", " (referencia)")), "1.00", "", "1.00", ""))
   c(if (R$type == "single") R$label else paste0("&emsp;", R$label), res_row(tz, R$term), res_row(ts, R$term))
 }))
 f1 <- as.data.frame(f1, stringsAsFactors = FALSE)
-names(f1) <- c("Term", "Zwisch aOR (95% CI)", "Zwisch P", "SIMPL aOR (95% CI)", "SIMPL P")
+names(f1) <- c(L("Term", "Término"), paste("Zwisch", AOR_CI), "Zwisch P", paste("SIMPL", AOR_CI), "SIMPL P")
 rz <- re_stats(m_z); rs <- re_stats(m_s)
-write_fig_results("1", "Forest plot of adjusted odds ratios", fig1_legend, list(
-  list(heading = "Model", text = sprintf(
-    "Mixed-effects cumulative logit models; %d attending evaluations, %d residents; random intercept per resident. aOR >1 = higher odds of a higher rating. Axis range plotted: %s to %s (log scale).",
+re_tab <- data.frame(c("Zwisch", "SIMPL"), c(num(rz["var"]), num(rs["var"])), c(num(rz["icc"]), num(rs["icc"])))
+names(re_tab) <- c(L("Model", "Modelo"), L("Intercept variance", "Varianza del intercepto"), L("ICC", "CCI"))
+write_fig_results("1", L("Forest plot of adjusted odds ratios", "Gráfico de bosque de las razones de momios ajustadas"), fig1_legend, list(
+  list(heading = L("Model", "Modelo"), text = sprintf(
+    L("Mixed-effects cumulative logit models; %d attending evaluations, %d residents; random intercept per resident. aOR >1 = higher odds of a higher rating. Axis range plotted: %s to %s (log scale).",
+      "Modelos de efectos mixtos de logit acumulado; %d evaluaciones del adscrito, %d residentes; intercepto aleatorio por residente. RMa >1 = mayor probabilidad de una calificación más alta. Rango del eje: %s a %s (escala log)."),
     n_obs, n_res, num(xmin), num(xmax))),
-  list(heading = "Adjusted odds ratios", data = f1),
-  list(heading = "Random effect", data = data.frame(
-    Model = c("Zwisch", "SIMPL"), `Intercept variance` = c(num(rz["var"]), num(rs["var"])),
-    ICC = c(num(rz["icc"]), num(rs["icc"])), check.names = FALSE))
+  list(heading = L("Adjusted odds ratios", "Razones de momios ajustadas"), data = f1),
+  list(heading = L("Random effect", "Efecto aleatorio"), data = re_tab)
 ))
 
 rebuild_all_md()
 save_session_info()
-message("Table 4, Table S1 and Figure 1 written to:\n  ", tab_dir, "\n  ", fig_dir)
+message(L("Table 4, Table S1 and Figure 1 written to:\n  ", "Tabla 4, Tabla S1 y Figura 1 guardadas en:\n  "), tab_dir, "\n  ", fig_dir)

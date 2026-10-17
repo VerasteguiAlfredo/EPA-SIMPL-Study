@@ -1,0 +1,28 @@
+%%{init: {'theme': 'base', 'themeVariables': {'fontFamily': 'Arial, Helvetica, Liberation Sans, sans-serif', 'fontSize': '14px', 'primaryColor': '#ffffff', 'primaryBorderColor': '#000000', 'primaryTextColor': '#000000', 'lineColor': '#000000'}, 'flowchart': {'curve': 'linear', 'nodeSpacing': 45, 'rankSpacing': 50, 'padding': 12, 'wrappingWidth': 420, 'htmlLabels': true}}}%%
+flowchart TB
+    A["<b>Evaluation forms submitted</b><br/>SIMPL-based EPA assessments, April–August 2026<br/>n = 293"]
+    X1["<b>Excluded</b><br/>Incomplete forms, n = 41"]
+    B["<b>Complete evaluation forms</b><br/>n = 252<br/>Attending evaluations, n = 171<br/>Resident self-assessments, n = 81<br/>159 surgical cases<br/>35 residents (PGY-1 to PGY-5) · 3 attending surgeons"]
+    C1["<b>Attending-rated outcomes</b><br/>n = 171 attending evaluations<br/>35 residents<br/><i>Tables 3–4; Figures 1–3, 5</i>"]
+    C2["<b>Self vs attending agreement</b><br/>n = 80 paired cases<br/>35 residents<br/><i>Table 5; Figure 4</i>"]
+    C3["<b>Implementation outcomes</b><br/>n = 252 forms<br/>3 attending surgeons · 35 residents<br/><i>Table 6; Figure 6</i>"]
+    X2["<b>Cases without a valid pair</b><br/>n = 79<br/>Attending evaluation only, n = 65<br/>Self-assessment only, n = 1<br/>Two attending evaluations, n = 13<br/>"]
+    S1["<b>Sensitivity analysis</b><br/>Excluding 17 flagged cases<br/>n = 141 attending evaluations<br/><i>Table S5</i>"]
+    S2["<b>Sensitivity analysis</b><br/>Excluding flagged pairs, n = 4<br/>n = 76 paired cases<br/><i>Table S6</i>"]
+
+    A --> B
+    A -.-> X1
+    B --> C1
+    B --> C2
+    B --> C3
+    C2 -.-> X2
+    C1 -.-> S1
+    C2 -.-> S2
+
+    classDef main fill:#ffffff,stroke:#000000,stroke-width:1.2px,color:#000000,font-family:Arial\,Helvetica\,Liberation Sans\,sans-serif;
+    classDef excl fill:#f4f4f4,stroke:#555555,stroke-width:1px,stroke-dasharray:4 3,color:#000000,font-family:Arial\,Helvetica\,Liberation Sans\,sans-serif;
+    classDef sens fill:#ffffff,stroke:#555555,stroke-width:1px,stroke-dasharray:4 3,color:#000000,font-family:Arial\,Helvetica\,Liberation Sans\,sans-serif;
+    class A,B,C1,C2,C3 main;
+    class X1,X2 excl;
+    class S1,S2 sens;
+    linkStyle default stroke:#000000,stroke-width:1.2px;

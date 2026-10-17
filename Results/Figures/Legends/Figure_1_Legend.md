@@ -1,0 +1,3 @@
+**Figure 1. Adjusted Associations With Attending-Rated Intraoperative Autonomy and Performance**
+
+Forest plot of adjusted odds ratios (aORs) and 95% CIs from mixed-effects ordinal regression models of the Zwisch autonomy level (left) and SIMPL performance rating (right), based on 171 attending evaluations of 35 general surgery residents. Models included postgraduate year (per 1-year increase), case complexity, procedure, surgical approach, evaluating attending, and time since study start, with a random intercept for resident. Values >1 indicate higher odds of a higher rating. Squares mark adjusted odds ratios and horizontal lines their 95% CIs; the dashed line marks an odds ratio of 1; the x-axis is on a logarithmic scale.

@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------------
+# Study data — never commit (resident initials, age, sex; attending names)
+# ---------------------------------------------------------------------------
+Dataset/
+*.xlsx
+*.xls
+*.csv
+*.sav
+*.dta
+*.rds
+*.RData
+*.rda
+
+# Resident-level outputs that list residents by initials
+Results/Figures/Results/Figure_S3_Results.md
+Results/Figures/Results/All_Figure_Results.md
+
+# Old flat figure outputs from earlier script versions
+Results/Figures/*.png
+Results/Figures/*.md
+Results/Figures/*.csv
+
+# ---------------------------------------------------------------------------
+# R / RStudio / VS Code
+# ---------------------------------------------------------------------------
+.Rhistory
+.Rapp.history
+.Rproj.user/
+.RDataTmp
+*.Rproj
+.vscode/
+.httr-oauth
+.Renviron
+
+# ---------------------------------------------------------------------------
+# Office / OS clutter
+# ---------------------------------------------------------------------------
+~$*
+*.tmp
+.DS_Store
+Thumbs.db
+desktop.ini

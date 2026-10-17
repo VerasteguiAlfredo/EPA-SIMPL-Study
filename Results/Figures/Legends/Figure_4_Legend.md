@@ -1,0 +1,3 @@
+**Figure 4. Agreement Between Resident Self-Assessment and Attending Rating**
+
+(A, B) Cross-classification of attending ratings (rows) and resident self-ratings (columns) for the 80 surgical cases with both an attending evaluation and a self-assessment, for (A) Zwisch autonomy level and (B) SIMPL performance rating; cell values are numbers of pairs and outlined cells mark exact agreement. (C) Mean difference between self-rating and attending rating (positive values indicate a higher self-rating) by postgraduate year and overall, with 95% CIs from a cluster bootstrap resampling residents (2,000 replicates). The dashed line marks no difference; numbers below the axis are pairs per group.

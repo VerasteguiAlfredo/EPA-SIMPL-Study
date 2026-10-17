@@ -1,7 +1,8 @@
 # =============================================================================
 # EPA / SIMPL study — run the full analysis
 #   Runs, in order:
-#     Tables:  Tables 1–3; Table 4 + Table S1 + Figure 1; Tables 5–6 + S2–S6
+#     Tables:  Tables 1–3; Table 4 + Table S1 + Figure 1; Tables 5–6 + S2–S6;
+#              All_Tables.docx (every HTML table in one Word file)
 #     Figures: Figures 2–4; Figures 5–6; Supplementary Figures S1–S3; study flowchart
 #   Figures are saved to Results/Figures/PNG, /Legends and /Results.
 #   Rebuilds All_Tables.md and All_Figure_Results.md and writes
@@ -32,6 +33,7 @@ scripts <- c(
   file.path(tables_dir,  "EPA_Tables_1-3.R"),
   file.path(tables_dir,  "EPA_Table4_Figure1.R"),
   file.path(tables_dir,  "EPA_Tables_5-6_Supplementary.R"),
+  file.path(tables_dir,  "EPA_Tables_to_docx.R"),
   file.path(figures_dir, "EPA_Figures_2-4.R"),
   file.path(figures_dir, "EPA_Figures_5-6.R"),
   file.path(figures_dir, "EPA_Supplementary_Figures.R"),

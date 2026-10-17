@@ -12,7 +12,8 @@ surg_training_evaluation/
 │   ├── Tables/
 │   │   ├── EPA_Tables_1-3.R               # Tables 1–3 (residents, cases, ratings by PGY)
 │   │   ├── EPA_Table4_Figure1.R           # Table 4, Table S1, Figure 1 (mixed-effects ordinal models)
-│   │   └── EPA_Tables_5-6_Supplementary.R # Tables 5–6, Tables S2–S6
+│   │   ├── EPA_Tables_5-6_Supplementary.R # Tables 5–6, Tables S2–S6
+│   │   └── EPA_Tables_to_docx.R           # all HTML tables -> All_Tables.docx
 │   └── Figures/
 │       ├── EPA_Figures_2-4.R              # Figures 2–4
 │       ├── EPA_Figures_5-6.R              # Figures 5–6
@@ -20,7 +21,7 @@ surg_training_evaluation/
 │       └── EPA_Flowchart.R                # study flow diagram (Mermaid)
 ├── Dataset/                               # NOT tracked (see Data availability)
 └── Results/
-    ├── Tables/  MD/ · HTML/
+    ├── Tables/  MD/ · HTML/ · All_Tables.docx
     ├── Figures/ PNG/ · Legends/ · Results/
     └── session_info.txt                   # R and package versions
 ```

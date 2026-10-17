@@ -141,9 +141,10 @@ writeLines(c("# Study Flow Diagram", "",
              kable(counts, format = "pipe", align = c("l", "r")), "",
              sprintf("_Generated %s from %s. Incomplete forms (n = %d) are entered manually in EPA_Flowchart.R._",
                      format(Sys.time(), "%Y-%m-%d %H:%M"), basename(data_path), N_INCOMPLETE)),
-           file.path(fig_dir, "Figure_Flowchart.md"), useBytes = TRUE)
+           file.path(fig_res_dir, "Figure_Flowchart.md"), useBytes = TRUE)
 
 # Plain .mmd copy for mermaid.live or the mermaid CLI (mmdc)
-writeLines(mmd[2:(length(mmd) - 1)], file.path(fig_dir, "Figure_Flowchart.mmd"), useBytes = TRUE)
+writeLines(mmd[2:(length(mmd) - 1)], file.path(fig_png_dir, "Figure_Flowchart.mmd"), useBytes = TRUE)
 
-message("Flowchart written to: ", file.path(fig_dir, "Figure_Flowchart.md"))
+writeLines(c("**Figure. Study Flow Diagram**", "", legend), file.path(fig_legend_dir, "Figure_Flowchart_Legend.md"), useBytes = TRUE)
+message("Flowchart written to: ", fig_res_dir, " (.md), ", fig_png_dir, " (.mmd), ", fig_legend_dir, " (legend)")
